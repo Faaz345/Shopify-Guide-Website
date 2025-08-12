@@ -1,9 +1,10 @@
 import { NextResponse, NextRequest } from 'next/server'
 import { jwtVerify } from 'jose'
 
-const COOKIE = 'sc_session'
+// Use the same cookie name as the payment backend
+const COOKIE = 'shopifyGuideAccess'
 // Allow public assets, health checks, the unauthorized page, and the session-establishing /set route
-const PUBLIC = [/^\/_next\//, /^\/favicon\.ico$/, /^\/robots\.txt$/, /^\/sitemap\.xml$/, /^\/unauthorized$/, /^\/set$/]
+const PUBLIC = [/^\/_next\//, /^\/favicon\.ico$/, /^\/robots\.txt$/, /^\/sitemap\.xml$/, /^\/unauthorized$/, /^\/set$/, /^\/api\/verify-token$/]
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl

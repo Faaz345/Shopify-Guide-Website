@@ -14,16 +14,21 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   try {
     const encoder = new TextEncoder()
-    await jwtVerify(token, encoder.encode(secret), { algorithms: ['HS256'] })
+    const payload = await jwtVerify(token, encoder.encode(secret), { algorithms: ['HS256'] })
+    
+    // Verify the token has required fields
+    if (!payload.payload.isPaid || !payload.payload.email) {
+      throw new Error('Invalid token payload')
+    }
 
     // Set cookie and redirect to home
-    const isSecure = true
+    const isProduction = process.env.NODE_ENV === 'production'
     const cookie = [
-      `sc_session=${encodeURIComponent(token)}`,
+      `shopifyGuideAccess=${encodeURIComponent(token)}`,
       'Path=/',
       'HttpOnly',
       'SameSite=Lax',
-      isSecure ? 'Secure' : '',
+      isProduction ? 'Secure' : '',
       `Max-Age=${60 * 60 * 24 * 30}`, // 30 days
     ].filter(Boolean).join('; ')
 
